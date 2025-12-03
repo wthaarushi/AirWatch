@@ -1,6 +1,6 @@
 // ===== CONFIG =====
-const WAQI_TOKEN = "4d8e188fe760559367184a6d1a368cdcf6c390c5";
-const OPENWEATHER_KEY = "284207b40311b4b36610dabd6a4eb0e8";
+const WAQI_TOKEN = "API Key goes here";
+const OPENWEATHER_KEY = "API Key goes here";
 
 // ===== APP STATE =====
 const appState = {
