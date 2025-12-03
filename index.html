@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirWatch - Air Quality Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Login Tab -->
+        <div id="login-tab" class="tab-content">
+            <div class="login-container">
+                <div class="login-form">
+                    <h1 class="login-title">🌬️ AirWatch</h1>
+                    <p class="login-subtitle">Your Personal Air Quality Monitor</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="login-email" placeholder="you@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="login-password" placeholder="••••••••">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Select Your City</label>
+                        <select class="form-control" id="city-select">
+                            <option value="San Francisco, CA">San Francisco, CA</option>
+                            <option value="New York, NY">New York, NY</option>
+                            <option value="Los Angeles, CA">Los Angeles, CA</option>
+                            <option value="Chicago, IL">Chicago, IL</option>
+                            <option value="Boston, MA">Boston, MA</option>
+                            <option value="Seattle, WA">Seattle, WA</option>
+                            <option value="Denver, CO">Denver, CO</option>
+                            <option value="Austin, TX">Austin, TX</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Age</label>
+                        <input type="number" class="form-control" id="user-age" min="1" max="120">
+                    </div>
+                    
+                    <button class="btn btn-primary btn-full" onclick="handleLogin()">Sign In</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content">
+            <div class="header">
+                <div class="header-top">
+                    <div class="logo">🌬️ AirWatch</div>
+                    <div class="user-avatar" id="user-avatar">AJ</div>
+                </div>
+                <div class="location-display">
+                    <span>📍</span>
+                    <span id="current-location">San Francisco, CA</span>
+                    <button class="change-location" onclick="switchTab('settings')">Change</button>
+                </div>
+            </div>
+
+            <div id="wildfire-alert"></div>
+
+            <div class="aqi-hero" id="aqi-hero">
+                <div class="aqi-number" id="aqi-number">72</div>
+                <div class="aqi-label" id="aqi-label">Moderate</div>
+                <div class="aqi-description">Air quality is acceptable</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Health Advisory</div>
+                <div id="health-advisory"></div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">🏃</div>
+                    <div class="info-title">Exercise Recommendation</div>
+                    <div class="info-value" id="exercise-safe">Moderate</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">😷</div>
+                    <div class="info-title">Mask Recommendation</div>
+                    <div class="info-value" id="mask-recommendation">Not Required</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Air Quality Details</div>
+                <div class="pollutants-grid" id="pollutants-grid"></div>
+            </div>
+        </div>
+
+        <!-- Map Tab -->
+        <div id="map-tab" class="tab-content">
+            <h2 class="text-center mb-24">Regional Air Quality Map</h2>
+            <div class="map-legend">
+                <div class="legend-item"><div class="legend-color" style="background: var(--aqi-good);"></div><span>Good (0-50)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--aqi-moderate);"></div><span>Moderate (51-100)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--aqi-unhealthy-sensitive);"></div><span>Unhealthy for Sensitive (101-150)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--aqi-unhealthy);"></div><span>Unhealthy (151-200)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--aqi-very-unhealthy);"></div><span>Very Unhealthy (201+)</span></div>
+            </div>
+            <div class="map-container">
+                <div class="map-grid" id="map-grid"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Nearby Areas with Better Air Quality</div>
+                <div id="nearby-areas"></div>
+            </div>
+        </div>
+
+        <!-- Weekly Tab -->
+        <div id="weekly-tab" class="tab-content">
+            <h2 class="text-center mb-24">7-Day Air Quality Forecast</h2>
+            <div class="card mb-24"><div class="alert alert-info"><span class="alert-icon">💡</span><div><strong>Insight:</strong> Tuesday and Thursday are the cleanest days.</div></div></div>
+            <div class="forecast-grid" id="forecast-grid"></div>
+        </div>
+
+        <!-- Health Tab -->
+        <div id="health-tab" class="tab-content">
+            <h2 class="text-center mb-24">Health Tracking</h2>
+            <div class="health-log-form">
+                <h3 class="mb-16">Log Your Symptoms</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" id="symptom-date">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Symptoms</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" value="cough"><span>Cough</span></label>
+                        <label class="checkbox-label"><input type="checkbox" value="shortness_of_breath"><span>Shortness of Breath</span></label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="eye_irritation">
+                            <span>Eye Irritation</span>
+                        </label>
+
+                        <label class="checkbox-label"><input type="checkbox" value="headache"><span>Headache</span></label>
+                        <label class="checkbox-label"><input type="checkbox" value="fatigue"><span>Fatigue</span></label>
+                        <label class="checkbox-label"><input type="checkbox" value="throat_irritation"><span>Throat Irritation</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-control" id="symptom-notes" rows="3"></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="addHealthEntry()">Add Entry</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Recent Health Entries</div>
+                <div class="health-entries" id="health-entries"></div>
+            </div>
+        </div>
+
+        <!-- News Tab -->
+        <div id="news-tab" class="tab-content">
+            <h2 class="text-center mb-24">Air Quality News & Insights</h2>
+            <div class="news-scroll" id="news-scroll"></div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <h2 class="text-center mb-24">Settings</h2>
+
+            <div class="settings-section">
+                <div class="settings-title">Location</div>
+                <div class="card">
+                    <div class="form-group">
+                        <label class="form-label">Select Your City</label>
+                        <div class="form-group">
+                            <label class="form-label">Enter Location</label>
+                            <input 
+                                id="locationSearchInput" 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="City or ZIP (ex: San Ramon, CA)"
+                            >
+                            <button class="btn btn-primary mt-8" id="locationSearchBtn">
+                                Update Location
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-title">Preferences</div>
+                <div class="settings-item">
+                    <div>
+                        <div style="font-weight: var(--font-weight-medium);">Health Notifications</div>
+                        <div class="text-secondary">Receive alerts about air quality</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <button class="btn btn-secondary btn-full" onclick="handleLogout()">Sign Out</button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="nav-bar">
+            <div class="nav-item active" data-tab="home" onclick="switchTab('home')"><div class="nav-icon">🏠</div><div>Home</div></div>
+            <div class="nav-item" data-tab="map" onclick="switchTab('map')"><div class="nav-icon">🗺️</div><div>Map</div></div>
+            <div class="nav-item" data-tab="weekly" onclick="switchTab('weekly')"><div class="nav-icon">📅</div><div>Weekly</div></div>
+            <div class="nav-item" data-tab="health" onclick="switchTab('health')"><div class="nav-icon">💊</div><div>Health</div></div>
+            <div class="nav-item" data-tab="news" onclick="switchTab('news')"><div class="nav-icon">📰</div><div>News</div></div>
+            <div class="nav-item" data-tab="settings" onclick="switchTab('settings')"><div class="nav-icon">⚙️</div><div>Settings</div></div>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
